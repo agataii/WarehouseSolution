@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Warehouse.Application.DTOs.ResourceDto>
+
+@{
+    ViewData["Title"] = "Ресурсы";
+}
+
+<h2 class="mb-4">Ресурсы</h2>
+
+<div class="mb-3">
+    <a class="btn btn-success" asp-action="Create">
+        <i class="bi bi-plus-circle"></i> Добавить ресурс
+    </a>
+</div>
+
+<table class="table table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Название</th>
+            <th>Активен</th>
+            <th class="text-center">Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Name</td>
+                <td>@(r.IsActive ? "Да" : "Нет")</td>
+                <td class="text-center">
+                    <a class="btn btn-sm btn-warning me-1" asp-action="Edit" asp-route-id="@r.Id">
+                        <i class="bi bi-pencil"></i> Изменить
+                    </a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@r.Id"
+                       onclick="return confirm('Удалить ресурс?');">
+                        <i class="bi bi-trash"></i> Удалить
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,115 @@
+﻿@model Warehouse.Application.DTOs.ReceiptCreateDto
+
+@{
+    ViewData["Title"] = "Добавить поступление";
+}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-plus-circle"></i> @ViewData["Title"]
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label asp-for="Number" class="form-label"></label>
+                <input asp-for="Number" class="form-control" />
+                <span asp-validation-for="Number" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Date" class="form-label"></label>
+                <input asp-for="Date" type="date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+
+            <h5 class="mt-4"><i class="bi bi-list-ul"></i> Позиции</h5>
+            <div id="items">
+                @if (Model.Items != null && Model.Items.Count > 0)
+                {
+                    for (int i = 0; i < Model.Items.Count; i++)
+                    {
+                        <div class="row mb-2 item-row">
+                            <div class="col">
+                                <select asp-for="Items[@i].ResourceId" asp-items="ViewBag.Resources" class="form-select"></select>
+                            </div>
+                            <div class="col">
+                                <select asp-for="Items[@i].UnitId" asp-items="ViewBag.Units" class="form-select"></select>
+                            </div>
+                            <div class="col">
+                                <input asp-for="Items[@i].Quantity" class="form-control" />
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-danger btn-remove">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <button type="button" id="addItem" class="btn btn-secondary mt-2">
+                <i class="bi bi-plus-lg"></i> Добавить строку
+            </button>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-save"></i> Сохранить
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Назад
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let itemIndex = @Model.Items?.Count ?? 0;
+
+        document.getElementById("addItem").addEventListener("click", function () {
+            let container = document.getElementById("items");
+            let newRow = document.createElement("div");
+            newRow.className = "row mb-2 item-row";
+            newRow.innerHTML = `
+                <div class="col">
+                    <select name="Items[${itemIndex}].ResourceId" class="form-select">
+                        @foreach (var res in (SelectList)ViewBag.Resources)
+                        {
+                                    <option value="@res.Value">@res.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col">
+                    <select name="Items[${itemIndex}].UnitId" class="form-select">
+                        @foreach (var unit in (SelectList)ViewBag.Units)
+                        {
+                                    <option value="@unit.Value">@unit.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col">
+                    <input name="Items[${itemIndex}].Quantity" class="form-control" />
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger btn-remove">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(newRow);
+            itemIndex++;
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.closest(".btn-remove")) {
+                if (document.querySelectorAll(".item-row").length > 1) {
+                    e.target.closest(".item-row").remove();
+                } else {
+                    e.target.closest(".item-row").remove();
+                    itemIndex = 0;
+                }
+            }
+        });
+    </script>
+}

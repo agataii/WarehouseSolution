@@ -1,0 +1,113 @@
+﻿@model Warehouse.Application.DTOs.ReceiptCreateDto
+
+@{
+    ViewData["Title"] = "Изменить поступление";
+}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-warning text-dark">
+        <i class="bi bi-pencil-square"></i> @ViewData["Title"]
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <div class="mb-3">
+                <label asp-for="Number" class="form-label"></label>
+                <input asp-for="Number" class="form-control" />
+                <span asp-validation-for="Number" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Date" class="form-label"></label>
+                <input asp-for="Date" type="date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+
+            <h5 class="mt-4"><i class="bi bi-list-ul"></i> Позиции</h5>
+            <div id="items">
+                @for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    <div class="row mb-2 item-row">
+                        <div class="col">
+                            <select asp-for="Items[@i].ResourceId" asp-items="ViewBag.Resources" class="form-select"></select>
+                        </div>
+                        <div class="col">
+                            <select asp-for="Items[@i].UnitId" asp-items="ViewBag.Units" class="form-select"></select>
+                        </div>
+                        <div class="col">
+                            <input asp-for="Items[@i].Quantity" class="form-control" />
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-danger btn-remove">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Шаблон строки для JS (скрытый) -->
+            <div id="item-template" class="d-none">
+                <div class="row mb-2 item-row">
+                    <div class="col">
+                        <select name="Items[{{index}}].ResourceId" class="form-select">
+                            @foreach (var res in (SelectList)ViewBag.Resources)
+                            {
+                                <option value="@res.Value">@res.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <select name="Items[{{index}}].UnitId" class="form-select">
+                            @foreach (var unit in (SelectList)ViewBag.Units)
+                            {
+                                <option value="@unit.Value">@unit.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <input name="Items[{{index}}].Quantity" class="form-control" />
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-danger btn-remove">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="addItem" class="btn btn-secondary mt-2">
+                <i class="bi bi-plus-lg"></i> Добавить строку
+            </button>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-save"></i> Сохранить
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Назад
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let itemIndex = @Model.Items.Count;
+
+        document.getElementById("addItem").addEventListener("click", function () {
+            let template = document.getElementById("item-template").innerHTML;
+            let newRowHtml = template.replace(/{{index}}/g, itemIndex);
+            let container = document.getElementById("items");
+            let tempDiv = document.createElement("div");
+            tempDiv.innerHTML = newRowHtml;
+            container.appendChild(tempDiv.firstElementChild);
+            itemIndex++;
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.closest(".btn-remove")) {
+                e.target.closest(".item-row").remove();
+            }
+        });
+    </script>
+}

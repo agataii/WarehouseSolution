@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Главная";
+}
+
+<style>
+    .dashboard-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+</style>
+
+<div class="container mt-4">
+    <h1 class="mb-4">📦 Склад — Панель управления</h1>
+
+    <div class="row g-3">
+        <div class="col-md-4 d-flex">
+            <div class="card shadow-sm flex-fill dashboard-card">
+                <div class="card-body text-center d-flex flex-column">
+                    <h5 class="card-title">Поступления</h5>
+                    <p class="card-text flex-grow-1">
+                        Просмотр, добавление и редактирование поступлений на склад.
+                    </p>
+                    <a asp-controller="Receipt" asp-action="Index" class="btn btn-primary mt-auto">
+                        <i class="bi bi-box-arrow-in-down"></i> Открыть
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 d-flex">
+            <div class="card shadow-sm flex-fill dashboard-card">
+                <div class="card-body text-center d-flex flex-column">
+                    <h5 class="card-title">Ресурсы</h5>
+                    <p class="card-text flex-grow-1">
+                        Управление ресурсами склада.
+                    </p>
+                    <a asp-controller="Resource" asp-action="Index" class="btn btn-primary mt-auto">
+                        <i class="bi bi-box-seam"></i> Открыть
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 d-flex">
+            <div class="card shadow-sm flex-fill dashboard-card">
+                <div class="card-body text-center d-flex flex-column">
+                    <h5 class="card-title">Единицы измерения</h5>
+                    <p class="card-text flex-grow-1">
+                        Настройка единиц измерения для ресурсов.
+                    </p>
+                    <a asp-controller="Unit" asp-action="Index" class="btn btn-primary mt-auto">
+                        <i class="bi bi-rulers"></i> Открыть
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

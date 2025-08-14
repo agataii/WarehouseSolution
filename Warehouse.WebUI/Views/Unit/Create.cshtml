@@ -1,0 +1,27 @@
+﻿@model Warehouse.Application.DTOs.UnitCreateDto
+
+@{
+    ViewData["Title"] = "Добавить единицу измерения";
+}
+
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-plus-circle"></i> @ViewData["Title"]
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success me-2">
+                <i class="bi bi-save"></i> Сохранить
+            </button>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Назад
+            </a>
+        </form>
+    </div>
+</div>
