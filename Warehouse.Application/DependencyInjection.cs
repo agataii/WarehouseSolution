@@ -9,13 +9,18 @@ namespace Warehouse.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            // AutoMapper
+            services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+
             // Сервисы
             services.AddScoped<IResourceService, ResourceService>();
             services.AddScoped<IUnitService, UnitService>();
             services.AddScoped<IReceiptService, ReceiptService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductGroupService, ProductGroupService>();
 
-            // AutoMapper
-            services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+            // Background Service
+            services.AddHostedService<ProductGroupingBackgroundService>();
 
             return services;
         }
