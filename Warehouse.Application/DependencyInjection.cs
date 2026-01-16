@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Warehouse.Application.Interfaces;
 using Warehouse.Application.Mapping;
 using Warehouse.Application.Services;
@@ -11,6 +13,9 @@ namespace Warehouse.Application
         {
             // AutoMapper
             services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+
+            // MediatR
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             // Сервисы
             services.AddScoped<IResourceService, ResourceService>();

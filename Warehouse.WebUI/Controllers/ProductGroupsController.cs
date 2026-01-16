@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Warehouse.Application.Commands.ProductGroups;
 using Warehouse.Application.DTOs;
-using Warehouse.Application.Interfaces;
+using Warehouse.Application.Queries.ProductGroups;
 
 namespace Warehouse.WebUI.Controllers
 {
@@ -8,28 +10,30 @@ namespace Warehouse.WebUI.Controllers
     [Route("api/[controller]")]
     public class ProductGroupsController : ControllerBase
     {
-        private readonly IProductGroupService _productGroupService;
+        private readonly IMediator _mediator;
         private readonly ILogger<ProductGroupsController> _logger;
 
         public ProductGroupsController(
-            IProductGroupService productGroupService,
+            IMediator mediator,
             ILogger<ProductGroupsController> logger)
         {
-            _productGroupService = productGroupService;
+            _mediator = mediator;
             _logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductGroupSummaryDto>>> GetAllGroups()
         {
-            var groups = await _productGroupService.GetAllGroupsAsync();
+            var query = new GetAllProductGroupsQuery();
+            var groups = await _mediator.Send(query);
             return Ok(groups);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductGroupDto>> GetGroupById(int id)
         {
-            var group = await _productGroupService.GetGroupByIdAsync(id);
+            var query = new GetProductGroupByIdQuery { Id = id };
+            var group = await _mediator.Send(query);
             if (group == null)
                 return NotFound();
 
@@ -41,7 +45,8 @@ namespace Warehouse.WebUI.Controllers
         {
             try
             {
-                await _productGroupService.ProcessUnprocessedProductsAsync();
+                var command = new ProcessUnprocessedProductsCommand();
+                await _mediator.Send(command);
                 return Ok(new { message = "Обработка товаров запущена" });
             }
             catch (Exception ex)

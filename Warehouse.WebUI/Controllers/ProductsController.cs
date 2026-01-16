@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Warehouse.Application.Commands.Products;
 using Warehouse.Application.DTOs;
-using Warehouse.Application.Interfaces;
+using Warehouse.Application.Queries.Products;
 
 namespace Warehouse.WebUI.Controllers
 {
@@ -8,14 +10,14 @@ namespace Warehouse.WebUI.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductService _productService;
+        private readonly IMediator _mediator;
         private readonly ILogger<ProductsController> _logger;
 
         public ProductsController(
-            IProductService productService,
+            IMediator mediator,
             ILogger<ProductsController> logger)
         {
-            _productService = productService;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -31,7 +33,11 @@ namespace Warehouse.WebUI.Controllers
             try
             {
                 using var stream = file.OpenReadStream();
-                await _productService.ImportFromExcelAsync(stream);
+                var command = new ImportProductsFromExcelCommand
+                {
+                    ExcelStream = stream
+                };
+                await _mediator.Send(command);
                 return Ok(new { message = "Товары успешно загружены" });
             }
             catch (Exception ex)
@@ -44,7 +50,8 @@ namespace Warehouse.WebUI.Controllers
         [HttpGet("unprocessed")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> GetUnprocessed()
         {
-            var products = await _productService.GetUnprocessedAsync();
+            var query = new GetUnprocessedProductsQuery();
+            var products = await _mediator.Send(query);
             return Ok(products);
         }
     }
